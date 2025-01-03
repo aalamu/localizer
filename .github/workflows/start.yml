@@ -44,9 +44,9 @@ jobs:
         rm private-key.asc
         gpg --list-secret-keys --keyid-format LONG  # List keys to verify import
 
-    - name: Set GPG Default Key
+    - name: Set GPG Default Key and Passphrase
       run: |
-        gpg --batch --yes --default-key "${{ secrets.GPG_PUB_KEY }}" --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}"
+        echo "${{ secrets.GPG_PASSPHRASE }}" | gpg --batch --yes --pinentry-mode loopback --passphrase-fd 0 --default-key "${{ secrets.GPG_PUB_KEY }}"
       env:
         GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
