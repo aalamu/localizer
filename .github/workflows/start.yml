@@ -45,6 +45,8 @@ jobs:
     
     - name: Configure settings.xml
       run: |
+        cd ~
+        ls
         cd .m2
         rm settings.xml || true # Remove files, ignore errors if they don't exist
         touch ./settings.xml
