@@ -28,6 +28,28 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
+    - name: Install GPG
+      run: sudo apt-get update && sudo apt-get install -y gnupg
+
+    - name: Import GPG key
+      run: |
+        echo "${{ secrets.GPG_PUB_KEY }}" | gpg --import
+        echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --import --no-tty --batch --yes
+        
+        # List keys to verify import
+        gpg --list-secret-keys --keyid-format LONG 
+
+    
+    - name: Configure settings.xml
+      run: |
+        cd ~
+        ls
+        cd .m2
+        rm settings.xml || true # Remove files, ignore errors if they don't exist
+        touch ./settings.xml
+        echo "${{ secrets.SETTINGS_XML }}" | base64 --decode > ./settings.xml
+      shell: bash
+
     - name: Clean
       run: mvn clean
 
@@ -42,16 +64,8 @@ jobs:
     
     - name: Build with Maven
       run: mvn -B package --file pom.xml
-    
-    - name: Configure settings.xml
-      run: |
-        cd ~
-        ls
-        cd .m2
-        rm settings.xml || true # Remove files, ignore errors if they don't exist
-        touch ./settings.xml
-        echo "${{ secrets.SETTINGS_XML }}" | base64 --decode > ./settings.xml
-      shell: bash
 
     - name: Deploy
-      run: mvn deploy -Pgpg
+      run: mvn deploy
+      env:
+        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
