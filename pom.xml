@@ -6,7 +6,7 @@
 
     <groupId>com.fleencorp.localizer</groupId>
     <artifactId>localizer</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
 
     <name>Localizer</name>
     <description>Localizer localize your API for example errors, exceptions and responses.</description>
@@ -23,9 +23,10 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
+        <maven-deploy-plugin.version>3.1.2</maven-deploy-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <central-publishing-maven-plugin.version>0.6.0</central-publishing-maven-plugin.version>
-        <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
     </properties>
 
     <developers>
@@ -105,22 +106,18 @@
                 <version>${maven-gpg-plugin.version}</version>
                 <executions>
                     <execution>
-                        <phase>verify</phase>
-                        <configuration>
-                            <passphrase>${env.GPG_PASSPHRASE}</passphrase>
-                        </configuration>
                         <goals>
                             <goal>sign</goal>
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <gpgArguments>
-                        <arg>--pinentry-mode</arg>
-                        <arg>loopback</arg>
-                    </gpgArguments>
-                </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>${maven-deploy-plugin.version}</version>
+            </plugin>
+
             <plugin>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
