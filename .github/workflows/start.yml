@@ -36,11 +36,14 @@ jobs:
         # Create .gnupg directory if it doesn't exist
         mkdir -p ~/.gnupg
 
+        # Fix .gnupg Permissions (Less Secure, Use with Caution)
+        chmod 700 ~/.gnupg
+
         # Import the private key (base64 encoded and piped directly to gpg)
-        echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 -d | gpg --batch --yes --import
+        echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 -d | gpg --batch --yes --no-tty --import
 
         # Set trust level (crucial for CI)
-        echo "5" | gpg --command-fd 0 --edit-key "${{ secrets.GPG_KEY_ID }}" trust
+        echo "5" | gpg --command-fd 0 --edit-key "${{ secrets.GPG_KEY_ID }}" trust        
 
         # Set the default key
         gpg --default-key "${{ secrets.GPG_KEY_ID }}"
