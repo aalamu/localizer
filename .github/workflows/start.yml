@@ -38,8 +38,11 @@ jobs:
 
     - name: Configure GPG for non-interactive use
       run: |
+        mkdir -p ~/.gnupg
+        chmod 700 ~/.gnupg
         echo "use-agent" >> ~/.gnupg/gpg.conf
         echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
+        echo "no-tty" >> ~/.gnupg/gpg.conf  # Disables tty interactions
 
     - name: Import GPG Private Key
       run: |
