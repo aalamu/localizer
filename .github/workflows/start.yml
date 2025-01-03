@@ -33,8 +33,8 @@ jobs:
 
     - name: Import GPG key
       run: |
-        echo "${{ secrets.GPG_PUBLIC_KEY }}" | base64 --decode > public_key.asc        
-        echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode > private_key.asc
+        echo "${{ secrets.GPG_PUBLIC_KEY }}" | base64 --decode | gpg --import        
+        echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode | gpg --import --no-tty --batch --yes
 
         gpg --import public_key.asc
         gpg --import private_key.asc
