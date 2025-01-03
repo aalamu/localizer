@@ -43,7 +43,7 @@ jobs:
       run: |
         # Create the .gnupg directory if it doesn't exist
         mkdir -p ~/.gnupg
-        
+
         # Ensure the gpg.conf file exists and configure loopback pinentry mode
         if [ ! -f ~/.gnupg/gpg.conf ]; then
           echo "Creating gpg.conf"
@@ -61,6 +61,9 @@ jobs:
 
         # Reload the GPG agent to apply the changes
         echo RELOADAGENT | gpg-connect-agent
+
+        # Set GPG_TTY to ensure GPG can access the terminal
+        export GPG_TTY=$(tty)
 
     - name: Extract version from tag
       id: extract_version
@@ -84,8 +87,12 @@ jobs:
 
 
     - name: Deploy Github and Maven Central
-      run: mvn deploy
+      run: |
+        # Set GPG_TTY again for the deploy step
+        export GPG_TTY=$(tty)
+        mvn deploy
       working-directory: localizer
       env:
         GITHUB_USERNAME: ${{ secrets.GITHUB_ACTOR }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
