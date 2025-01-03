@@ -31,72 +31,24 @@ jobs:
     - name: Install GPG
       run: sudo apt-get update && sudo apt-get install -y gnupg
 
-    - name: Set up GPG
+    - name: Import GPG key
       run: |
-        # Create .gnupg directory if it doesn't exist
-        mkdir -p ~/.gnupg
+        echo "${{ secrets.GPG_PUB_KEY }}" | gpg --import
+        echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --import --no-tty --batch --yes
+        
+        # List keys to verify import
+        gpg --list-secret-keys --keyid-format LONG 
 
-        # Fix .gnupg Permissions (Less Secure, Use with Caution)
-        chmod 700 ~/.gnupg
-
-        # Import the private key (base64 encoded and piped directly to gpg)
-        echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 -d | gpg --batch --yes --no-tty --import
-
-        # Set trust level (crucial for CI)
-        echo "5" | gpg --command-fd 0 --edit-key "${{ secrets.GPG_KEY_ID }}" trust        
-
-        # Set the default key
-        gpg --default-key "${{ secrets.GPG_KEY_ID }}"
-
-        # Configure gpg-agent (Simplified and more reliable for CI)
-        echo "pinentry-mode loopback" >> ~/.gnupg/gpg-agent.conf
-        echo "default-cache-ttl 3600" >> ~/.gnupg/gpg-agent.conf
-        echo "max-cache-ttl 7200" >> ~/.gnupg/gpg-agent.conf
-        gpg-connect-agent reloadagent /bye
-
-
-    # - uses: actions/checkout@v3
-    # - name: Set up GPG
-    #   run: |
-    #     # Import the private key (base64 encoded)
-    #     echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 -d | gpg --import
-    #     # Trust the key
-    #     gpg --edit-key "${{ secrets.GPG_PUB_KEY }}" trust
-    #     # Set the default key
-    #     gpgconf --change-ownertrust
-    #     gpg --default-key "${{ secrets.GPG_PUB_KEY }}"
-    #     # Configure gpg-agent to not prompt for passphrase
-    #     echo "pinentry-mode loopback" >> ~/.gnupg/gpg-agent.conf
-    #     echo "default-cache-ttl 3600" >> ~/.gnupg/gpg-agent.conf # Cache for 1 hour
-    #     echo "max-cache-ttl 7200" >> ~/.gnupg/gpg-agent.conf   # Max cache for 2 hours
-    #     gpg-connect-agent reloadagent /bye
-
-    # - name: Create and Set GPG Home Directory Permissions
-    #   run: |
-    #     mkdir -p ~/.gnupg
-    #     chmod 700 ~/.gnupg
-
-    # - name: Configure GPG for non-interactive use
-    #   run: |
-    #     mkdir -p ~/.gnupg
-    #     chmod 700 ~/.gnupg
-    #     echo "use-agent" >> ~/.gnupg/gpg.conf
-    #     echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
-    #     echo "no-tty" >> ~/.gnupg/gpg.conf  # Disables tty interactions
-
-    # - name: Import GPG Private Key
-    #   run: |
-    #     mkdir -p ~/.gnupg
-    #     echo "${{ secrets.GPG_PRIVATE_KEY }}" > private-key.asc
-    #     gpg --batch --import private-key.asc
-    #     rm private-key.asc
-    #     gpg --list-secret-keys --keyid-format LONG  # List keys to verify import
-
-    # - name: Set GPG Default Key and Passphrase
-    #   run: |
-    #     echo "${{ secrets.GPG_PASSPHRASE }}" | gpg --batch --yes --pinentry-mode loopback --passphrase-fd 0 --default-key "${{ secrets.GPG_PUB_KEY }}"
-    #   env:
-    #     GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+    
+    - name: Configure settings.xml
+      run: |
+        cd ~
+        ls
+        cd .m2
+        rm settings.xml || true # Remove files, ignore errors if they don't exist
+        touch ./settings.xml
+        echo "${{ secrets.SETTINGS_XML }}" | base64 --decode > ./settings.xml
+      shell: bash
 
     - name: Clean
       run: mvn clean
@@ -112,16 +64,8 @@ jobs:
     
     - name: Build with Maven
       run: mvn -B package --file pom.xml
-    
-    - name: Configure settings.xml
-      run: |
-        cd ~
-        ls
-        cd .m2
-        rm settings.xml || true # Remove files, ignore errors if they don't exist
-        touch ./settings.xml
-        echo "${{ secrets.SETTINGS_XML }}" | base64 --decode > ./settings.xml
-      shell: bash
 
     - name: Deploy
-      run: mvn deploy -Pgpg
+      run: mvn deploy
+      env:
+        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
