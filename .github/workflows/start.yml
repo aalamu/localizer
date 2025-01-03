@@ -33,14 +33,13 @@ jobs:
 
     - name: Import GPG key
       run: |
-        echo "${{ secrets.GPG_PUB_KEY }}" | gpg --import
-        gpg --list-secret-keys --keyid-format LONG
+        echo "${{ secrets.GPG_KEY_ID }}" | gpg --import        
+        echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode > private_key.asc
+        cat private_key.asc  # Optional: Debugging step to view the decoded private key
+        gpg --import private_key.asc --batch --yes --no-tty
         
-        echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode | gpg --import --batch --yes --no-tty
-
         # List keys to verify import
         gpg --list-secret-keys --keyid-format LONG 
-
     
     - name: Configure settings.xml
       run: |
