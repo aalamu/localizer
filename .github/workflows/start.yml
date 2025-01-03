@@ -31,8 +31,10 @@ jobs:
     - name: Install GPG
       run: sudo apt-get update && sudo apt-get install -y gnupg
 
-    - name: Set up GPG Home Directory Permissions
-      run: chmod 700 ~/.gnupg
+    - name: Create and Set GPG Home Directory Permissions
+      run: |
+        mkdir -p ~/.gnupg
+        chmod 700 ~/.gnupg
 
     - name: Import GPG Private Key
       run: |
