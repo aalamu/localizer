@@ -13,6 +13,14 @@ import java.util.function.Supplier;
 
 import static java.util.Objects.nonNull;
 
+/**
+ * A class that implements the {@link Localizer} interface, serving as an adapter for localization functionality.
+ * This class provides a bridge to localize messages or data, depending on the specific implementation of {@link Localizer}.
+ * It can be extended or customized to meet the specific needs of the application while conforming to the {@link Localizer} interface.
+ *
+ * @author Yusuf Àlàmu Musa
+ * @version 1.0
+ */
 public class LocalizerAdapter implements Localizer {
 
   private final MessageSource messageSource;

@@ -1,5 +1,6 @@
 package com.fleencorp.localizer.model.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.ws.rs.core.Response;
 
 import java.time.LocalDateTime;
@@ -15,71 +16,61 @@ public class ErrorResponse {
 
   private String message;
   private String reason;
-  private ValidationTypeError errorType;
   private Object status;
   private LocalDateTime timestamp;
   private List<Map<String, Object>> fieldErrors = new ArrayList<>();
   private Map<String, Object> details = new HashMap<>();
 
+  @JsonProperty("message")
   public String getMessage() {
     return message;
   }
 
-  public void setMessage(String message) {
+  public void setMessage(final String message) {
     this.message = message;
   }
 
-  // Getter and Setter for reason
+  @JsonProperty("reason")
   public String getReason() {
     return reason;
   }
 
-  public void setReason(String reason) {
+  public void setReason(final String reason) {
     this.reason = reason;
   }
 
-  // Getter and Setter for errorType
-  public ValidationTypeError getErrorType() {
-    return errorType;
-  }
-
-  public void setErrorType(ValidationTypeError errorType) {
-    this.errorType = errorType;
-  }
-
-  // Getter and Setter for status
+  @JsonProperty("status")
   public Object getStatus() {
     return status;
   }
 
-  public void setStatus(Object status) {
+  public void setStatus(final Object status) {
     this.status = status;
   }
 
-  // Getter and Setter for timestamp
+  @JsonProperty("timestamp")
   public LocalDateTime getTimestamp() {
     return timestamp;
   }
 
-  public void setTimestamp(LocalDateTime timestamp) {
+  public void setTimestamp(final LocalDateTime timestamp) {
     this.timestamp = timestamp;
   }
 
-  // Getter and Setter for fieldErrors
   public List<Map<String, Object>> getFieldErrors() {
     return fieldErrors;
   }
 
-  public void setFieldErrors(List<Map<String, Object>> fieldErrors) {
+  public void setFieldErrors(final List<Map<String, Object>> fieldErrors) {
     this.fieldErrors = fieldErrors;
   }
 
-  // Getter and Setter for details
+  @JsonProperty("details")
   public Map<String, Object> getDetails() {
     return details;
   }
 
-  public void setDetails(Map<String, Object> details) {
+  public void setDetails(final Map<String, Object> details) {
     this.details = details;
   }
 
@@ -119,7 +110,7 @@ public class ErrorResponse {
    *         and default error type.
    */
 
-  public static ErrorResponse of(String message, Response.Status status, List<Map<String, Object>> fieldErrors) {
+  public static ErrorResponse of(final String message, final Response.Status status, final List<Map<String, Object>> fieldErrors) {
     final ErrorResponse errorResponse = new ErrorResponse();
     errorResponse.setMessage(message);
     errorResponse.setReason(status.getReasonPhrase());
@@ -144,32 +135,5 @@ public class ErrorResponse {
     errorResponse.setTimestamp(LocalDateTime.now());
 
     return errorResponse;
-  }
-
-  public void setDefaultErrorType() {
-    errorType = ValidationTypeError.dataValidation();
-  }
-
-  /**
-   * Enum representing different types of validation errors.
-   *
-   * <p>This enum is used to categorize validation errors. Currently, it includes only one type: {@code DATA_VALIDATION}.</p>
-   *
-   * @author Yusuf Alamu Musa
-   * @version 1.0
-   */
-  public enum ValidationTypeError {
-    DATA_VALIDATION;
-
-    /**
-     * Retrieves the {@code DATA_VALIDATION} constant of this enum.
-     *
-     * <p>This static method provides a convenient way to obtain the {@code DATA_VALIDATION} value of the enum.</p>
-     *
-     * @return the {@code DATA_VALIDATION} constant.
-     */
-    public static ValidationTypeError dataValidation() {
-      return ValidationTypeError.DATA_VALIDATION;
-    }
   }
 }

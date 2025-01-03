@@ -1,15 +1,21 @@
 package com.fleencorp.localizer.model.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public abstract class ApiResponse {
 
+  protected String message;
+
+  @JsonIgnore
   abstract public String getMessageCode();
 
+  @JsonIgnore
   public Object[] getParams() {
     return new Object[] {};
   }
 
-  protected String message;
-
+  @JsonProperty("message")
   public String getMessage() {
     return message;
   }

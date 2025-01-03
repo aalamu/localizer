@@ -6,16 +6,17 @@
 
     <groupId>com.fleencorp.localizer</groupId>
     <artifactId>localizer</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
 
     <name>Localizer</name>
     <description>Localizer localize your API for example errors, exceptions and responses.</description>
     <url>https://github.com/aalamu/localizer</url>
 
-
     <licenses>
         <license>
             <name>The Apache License, Version 2.0</name>
+            <url>https://opensource.org/license/apache-2-0</url>
+            <distribution>repo</distribution>
         </license>
     </licenses>
 
@@ -23,16 +24,21 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <central-publishing-maven-plugin.version>0.6.0</central-publishing-maven-plugin.version>
+        <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
     </properties>
 
     <developers>
         <developer>
+            <id>aalamu</id>
             <name>Àlàmù</name>
             <email>yusufalamumusa@gmail.com</email>
         </developer>
     </developers>
 
     <scm>
+        <connection>scm:git:https://github.com/aalamu/localizer.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:aalamu/localizer.git</developerConnection>
         <url>https://github.com/aalamu/localizer.git</url>
     </scm>
 
@@ -59,6 +65,12 @@
             <artifactId>spring-context</artifactId>
             <version>6.2.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.18.2</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -88,9 +100,22 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>${maven-gpg-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
-                <version>0.6.0</version>
+                <version>${central-publishing-maven-plugin.version}</version>
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>ossrh</publishingServerId>
