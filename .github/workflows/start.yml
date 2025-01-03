@@ -59,14 +59,17 @@ jobs:
         echo "${{ secrets.GPG_PRIVATE_KEY }}" > private-key.asc
         gpg --batch --import private-key.asc
         rm private-key.asc
+        gpg --list-secret-keys --keyid-format LONG  # This will list the imported keys
       env:
         GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
 
-    - name: Configure GPG Passphrase
+    - name: Set GPG Default Key
       run: |
-        echo "test" | gpg --batch --yes --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --quick-set-passphrase --import
+        gpg --batch --yes --default-key "${{ secrets.GPG_PUB_KEY }}" --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --quick-set-passphrase --import
       env:
         GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        GPG_PUB_KEY: ${{ secrets.GPG_PUB_KEY }}
+
 
     - name: Deploy
       run: mvn deploy -Pgpg
