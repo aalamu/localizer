@@ -53,5 +53,20 @@ jobs:
         echo "${{ secrets.SETTINGS_XML }}" | base64 --decode > ./settings.xml
       shell: bash
 
+    - name: Import GPG Private Key
+      run: |
+        mkdir -p ~/.gnupg
+        echo "${{ secrets.GPG_PRIVATE_KEY }}" > private-key.asc
+        gpg --batch --import private-key.asc
+        rm private-key.asc
+      env:
+        GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+
+    - name: Configure GPG Passphrase
+      run: |
+        echo "test" | gpg --batch --yes --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --quick-set-passphrase --import
+      env:
+        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
     - name: Deploy
       run: mvn deploy -Pgpg
