@@ -34,8 +34,10 @@ jobs:
     - name: Import GPG key
       run: |
         echo "${{ secrets.GPG_PUB_KEY }}" | gpg --import
-        echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 -d | gpg --import --no-tty --batch --yes
+        gpg --list-secret-keys --keyid-format LONG
         
+        echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode | gpg --import --batch --yes --no-tty
+
         # List keys to verify import
         gpg --list-secret-keys --keyid-format LONG 
 
