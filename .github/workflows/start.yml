@@ -43,22 +43,22 @@ jobs:
       id: extract_version
       run: echo "RELEASE_VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
-    - name: Install
-      run: |
-        # Set GPG_TTY again for the deploy step
-        mvn install
-      env:
-        MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+    # - name: Install
+    #   run: |
+    #     # Set GPG_TTY again for the deploy step
+    #     mvn install
+    #   env:
+    #     MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
     - name: Build with Maven
       run: mvn clean verify
       env:
         MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
-    - name: Test
-      run: mvn test
-      env:
-        MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+    # - name: Test
+    #   run: mvn test
+    #   env:
+    #     MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
     - name: Package with Maven
       run: mvn versions:set -DnewVersion=${{ env.RELEASE_VERSION }} && mvn package -DskipTests
