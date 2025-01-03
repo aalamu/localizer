@@ -36,12 +36,12 @@ jobs:
         echo "${{ secrets.GPG_PUBLIC_KEY }}" | base64 --decode > public_key.asc        
         echo "${{ secrets.GPG_PRIVATE_KEY }}" | base64 --decode > private_key.asc
 
-        gpg --import public_key.asc --batch --yes --no-tty
-        gpg --import private_key.asc --batch --yes --no-tty
+        gpg --import public_key.asc
+        gpg --import private_key.asc
         
         # List keys to verify import
         gpg --list-secret-keys --keyid-format LONG 
-    
+
     - name: Configure settings.xml
       run: |
         cd ~
