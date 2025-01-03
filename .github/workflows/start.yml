@@ -28,6 +28,26 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
+    - name: Install GPG
+      run: sudo apt-get update && sudo apt-get install -y gnupg
+
+    - name: Import GPG Private Key
+      run: |
+        mkdir -p ~/.gnupg
+        echo "${{ secrets.GPG_PRIVATE_KEY }}" > private-key.asc
+        gpg --batch --import private-key.asc
+        rm private-key.asc
+        gpg --list-secret-keys --keyid-format LONG  # This will list the imported keys
+      env:
+        GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+
+    - name: Set GPG Default Key
+      run: |
+        gpg --batch --yes --default-key "${{ secrets.GPG_PUB_KEY }}" --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --quick-set-passphrase --import
+      env:
+        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        GPG_PUB_KEY: ${{ secrets.GPG_PUB_KEY }}
+
     - name: Clean
       run: mvn clean
 
@@ -52,24 +72,6 @@ jobs:
         touch ./settings.xml
         echo "${{ secrets.SETTINGS_XML }}" | base64 --decode > ./settings.xml
       shell: bash
-
-    - name: Import GPG Private Key
-      run: |
-        mkdir -p ~/.gnupg
-        echo "${{ secrets.GPG_PRIVATE_KEY }}" > private-key.asc
-        gpg --batch --import private-key.asc
-        rm private-key.asc
-        gpg --list-secret-keys --keyid-format LONG  # This will list the imported keys
-      env:
-        GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-
-    - name: Set GPG Default Key
-      run: |
-        gpg --batch --yes --default-key "${{ secrets.GPG_PUB_KEY }}" --pinentry-mode loopback --passphrase "${{ secrets.GPG_PASSPHRASE }}" --quick-set-passphrase --import
-      env:
-        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        GPG_PUB_KEY: ${{ secrets.GPG_PUB_KEY }}
-
 
     - name: Deploy
       run: mvn deploy -Pgpg
