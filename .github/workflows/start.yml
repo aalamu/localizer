@@ -39,32 +39,6 @@ jobs:
       with:
         servers: '[{"id": "central", "username": "${{secrets.MAVEN_USERNAME}}", "password": "${{secrets.MAVEN_PASSWORD}}"}]'
 
-    - name: Configure GPG for non-interactive environment
-      run: |
-        # Create the .gnupg directory if it doesn't exist
-        mkdir -p ~/.gnupg
-
-        # Ensure the gpg.conf file exists and configure loopback pinentry mode
-        if [ ! -f ~/.gnupg/gpg.conf ]; then
-          echo "Creating gpg.conf"
-          touch ~/.gnupg/gpg.conf
-        fi
-        echo "use-agent" >> ~/.gnupg/gpg.conf
-        echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
-
-        # Ensure the gpg-agent.conf file exists and configure loopback pinentry mode
-        if [ ! -f ~/.gnupg/gpg-agent.conf ]; then
-          echo "Creating gpg-agent.conf"
-          touch ~/.gnupg/gpg-agent.conf
-        fi
-        echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
-
-        # Reload the GPG agent to apply the changes
-        echo RELOADAGENT | gpg-connect-agent
-
-        # Set GPG_TTY to ensure GPG can access the terminal
-        export GPG_TTY=$(tty)
-
     - name: Extract version from tag
       id: extract_version
       run: echo "RELEASE_VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
@@ -72,7 +46,6 @@ jobs:
     - name: Install
       run: |
         # Set GPG_TTY again for the deploy step
-        export GPG_TTY=$(tty)
         mvn install
       env:
         MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
@@ -94,7 +67,6 @@ jobs:
     - name: Deploy Github and Maven Central
       run: |
         # Set GPG_TTY again for the deploy step
-        export GPG_TTY=$(tty)
         mvn deploy
       env:
         GITHUB_USERNAME: ${{ secrets.GITHUB_ACTOR }}
