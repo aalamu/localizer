@@ -36,6 +36,11 @@ jobs:
         mkdir -p ~/.gnupg
         chmod 700 ~/.gnupg
 
+    - name: Configure GPG for non-interactive use
+      run: |
+        echo "use-agent" >> ~/.gnupg/gpg.conf
+        echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
+
     - name: Import GPG Private Key
       run: |
         mkdir -p ~/.gnupg
