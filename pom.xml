@@ -106,6 +106,13 @@
                 <executions>
                     <execution>
                         <phase>verify</phase>
+                        <configuration>
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                            <passphrase>${env.GPG_PASSPHRASE}</passphrase>
+                        </configuration>
                         <goals>
                             <goal>sign</goal>
                         </goals>
