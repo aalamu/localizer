@@ -2,6 +2,8 @@ package com.fleencorp.localizer.service;
 
 import com.fleencorp.localizer.model.response.ApiResponse;
 import com.fleencorp.localizer.model.exception.ApiException;
+import com.fleencorp.localizer.model.response.ErrorResponse;
+import jakarta.ws.rs.core.Response;
 
 import java.util.Locale;
 import java.util.function.Supplier;
@@ -31,4 +33,6 @@ public interface Localizer {
   <T extends ApiException> T of(final T ex);
 
   <T extends ApiException> String getExMessage(final T ex);
+
+  <T extends ApiException> ErrorResponse withStatus(T ex, Response.Status status);
 }

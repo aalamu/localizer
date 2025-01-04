@@ -230,6 +230,7 @@ public class LocalizerAdapter implements Localizer {
    * @param status the HTTP status to associate with the error response
    * @return an {@link ErrorResponse} with the resolved error message and status, or a default {@link ErrorResponse} if the exception or message code is {@code null}
    */
+  @Override
   public <T extends ApiException> ErrorResponse withStatus(final T ex, final Response.Status status) {
     if (nonNull(ex) && nonNull(ex.getMessageCode())) {
       final String message = getMessageEx(ex.getMessageCode(), ex.getParams());
