@@ -6,7 +6,7 @@
 
     <groupId>com.fleencorp.i18n</groupId>
     <artifactId>localizer</artifactId>
-    <version>1.2.2</version>
+    <version>1.2.3</version>
     <packaging>jar</packaging>
 
     <name>Localizer</name>
