@@ -42,7 +42,7 @@ jobs:
 
       - name: Configure settings.xml
         run: |
-          cd .m2
+          mkdir -p ~/.m2 && cd ~/.m2
           rm settings.xml || true # Remove files, ignore errors if they don't exist
           touch ./settings.xml
           echo "${{ secrets.SETTINGS_XML }}" | base64 --decode > ./settings.xml
