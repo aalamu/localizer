@@ -16,6 +16,9 @@ on:
   pull_request:
     branches: [ "main" ]
 
+permissions:
+  contents: write
+
 jobs:
   release:
     name: "Release"
@@ -31,38 +34,15 @@ jobs:
         distribution: 'temurin'
         java-version: '21'
         cache: maven
-        gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-        gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
+        server-id: central
+        server-username: ${{ secrets.MAVEN_CENTRAL_USERNAME }} # env variable for username in deploy
+        server-password: ${{ secrets.MAVEN_CENTRAL_TOKEN }} # env variable for token in deploy
+        gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }} # Value of the GPG private key to import
+        gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }} # env variable for GPG private key passphrase
 
-    - name: Setup Maven Settings
-      uses: s4u/maven-settings-action@v3.0.0
-      with:
-        servers: '[{"id": "central", "username": "${{secrets.MAVEN_USERNAME}}", "password": "${{secrets.MAVEN_PASSWORD}}"}]'
-
-    - name: Extract version from tag
-      id: extract_version
-      run: echo "RELEASE_VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-
-    - name: Install
-      run: mvn install
-
-    - name: Build with Maven
-      run: mvn clean verify
-      working-directory: localizer
+    - name: Publish artifact
+      run: mvn clean deploy -P deployment
       env:
+        MAVEN_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+        MAVEN_CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
         MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-
-    - name: Test
-      run: mvn test
-
-    - name: Package with Maven
-      run: mvn versions:set -DnewVersion=${{ env.RELEASE_VERSION }} && mvn package -DskipTests
-      working-directory: localizer
-
-
-    - name: Deploy Github and Maven Central
-      run: mvn deploy
-      working-directory: localizer
-      env:
-        GITHUB_USERNAME: ${{ secrets.GITHUB_ACTOR }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

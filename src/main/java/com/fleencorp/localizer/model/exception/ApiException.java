@@ -29,6 +29,11 @@ public class ApiException extends RuntimeException {
     return new HashMap<>();
   }
 
+  @Override
+  public String getMessage() {
+    return message;
+  }
+
   public void setMessage(final String message) {
     this.message = message;
   }
