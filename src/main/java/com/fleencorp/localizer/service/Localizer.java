@@ -1,9 +1,6 @@
 package com.fleencorp.localizer.service;
 
-import com.fleencorp.localizer.model.exception.ApiException;
 import com.fleencorp.localizer.model.response.ApiResponse;
-import com.fleencorp.localizer.model.response.ErrorResponse;
-import jakarta.ws.rs.core.Response;
 
 import java.util.Locale;
 import java.util.function.Supplier;
