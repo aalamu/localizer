@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 public class ErrorResponse {
 
   private static final String DEFAULT_MESSAGE = "An error has occurred";
@@ -109,7 +108,6 @@ public class ErrorResponse {
    * @return a new {@link ErrorResponse} instance with the specified message, status, reason, timestamp, field errors,
    *         and default error type.
    */
-
   public static ErrorResponse of(final String message, final Response.Status status, final List<Map<String, Object>> fieldErrors) {
     final ErrorResponse errorResponse = new ErrorResponse();
     errorResponse.setMessage(message);

@@ -1,10 +1,7 @@
 package com.fleencorp.localizer.service.adapter;
 
-import com.fleencorp.localizer.model.exception.ApiException;
 import com.fleencorp.localizer.model.response.ApiResponse;
-import com.fleencorp.localizer.model.response.ErrorResponse;
 import com.fleencorp.localizer.service.Localizer;
-import jakarta.ws.rs.core.Response;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
@@ -24,16 +21,9 @@ import static java.util.Objects.nonNull;
 public class LocalizerAdapter implements Localizer {
 
   private final MessageSource messageSource;
-  private final MessageSource responseMessageSource;
-  private final MessageSource errorMessageSource;
 
-  public LocalizerAdapter(
-      final MessageSource messageSource,
-      final MessageSource responseMessageSource,
-      final MessageSource errorMessageSource) {
+  public LocalizerAdapter(final MessageSource messageSource) {
     this.messageSource = messageSource;
-    this.responseMessageSource = responseMessageSource;
-    this.errorMessageSource = errorMessageSource;
   }
 
   /**
@@ -49,30 +39,6 @@ public class LocalizerAdapter implements Localizer {
   }
 
   /**
-   * Retrieves a response message from the response message source, resolving it based on the provided key, locale, and optional parameters.
-   *
-   * @param key the message key to retrieve the response message for
-   * @param locale the locale to resolve the message for
-   * @param params optional parameters to be used within the message if applicable
-   * @return the resolved response message as a {@link String}
-   */
-  public String getMessageRes(final String key, final Locale locale, final Object...params) {
-    return responseMessageSource.getMessage(key, params, locale);
-  }
-
-  /**
-   * Retrieves an error message from the error message source, resolving it based on the provided key, locale, and optional parameters.
-   *
-   * @param key the message key to retrieve the error message for
-   * @param locale the locale to resolve the message for
-   * @param params optional parameters to be used within the message if applicable
-   * @return the resolved error message as a {@link String}
-   */
-  public String getMessageEx(final String key, final Locale locale, final Object...params) {
-    return errorMessageSource.getMessage(key, params, locale);
-  }
-
-  /**
    * Retrieves a message from the message source, resolving it based on the provided key and optional parameters,
    * using the current locale from the {@link LocaleContextHolder}.
    *
@@ -85,33 +51,9 @@ public class LocalizerAdapter implements Localizer {
   }
 
   /**
-   * Retrieves a response message from the response message source, resolving it based on the provided key and optional parameters,
-   * using the current locale from the {@link LocaleContextHolder}.
-   *
-   * @param key the message key to retrieve the response message for
-   * @param params optional parameters to be used within the message if applicable
-   * @return the resolved response message as a {@link String}
-   */
-  public String getMessageRes(final String key, final Object...params) {
-    return getMessageRes(key, LocaleContextHolder.getLocale(), params);
-  }
-
-  /**
-   * Retrieves an error message from the error message source, resolving it based on the provided key and optional parameters,
-   * using the current locale from the {@link LocaleContextHolder}.
-   *
-   * @param key the message key to retrieve the error message for
-   * @param params optional parameters to be used within the message if applicable
-   * @return the resolved error message as a {@link String}
-   */
-  public String getMessageEx(final String key, final Object...params) {
-    return getMessageEx(key, LocaleContextHolder.getLocale(), params);
-  }
-
-  /**
    * Sets the message in the provided {@link ApiResponse} object based on its message code.
    * If the response and its message code are not null, the method retrieves the corresponding message
-   * from the response message source and sets it in the response.
+   * from the message source and sets it in the response.
    *
    * @param <T> the type of {@link ApiResponse}
    * @param response the {@link ApiResponse} object to set the message for
@@ -119,17 +61,16 @@ public class LocalizerAdapter implements Localizer {
    */
   public <T extends ApiResponse> T of(final T response) {
     if (nonNull(response) && nonNull(response.getMessageCode())) {
-      final String message = getMessageRes(response.getMessageCode());
+      final String message = getMessage(response.getMessageCode());
       response.setMessage(message);
-      return response;
     }
-    return null;
+    return response;
   }
 
   /**
    * Sets the message in the provided {@link ApiResponse} object based on the provided message code.
    * If the response and message code are not null, the method retrieves the corresponding message
-   * from the response message source using the provided message code and the response's parameters,
+   * from the message source using the provided message code and the response's parameters,
    * then sets the message in the response.
    *
    * @param <T> the type of {@link ApiResponse}
@@ -139,15 +80,14 @@ public class LocalizerAdapter implements Localizer {
    */
   public <T extends ApiResponse> T of(final T response, final String messageCode) {
     if (nonNull(response) && nonNull(messageCode)) {
-      final String message = getMessageRes(messageCode, response.getParams());
+      final String message = getMessage(messageCode, response.getParams());
       response.setMessage(message);
-      return response;
     }
-    return null;
+    return response;
   }
 
   /**
-   * Retrieves the message for the given message code from the response message source.
+   * Retrieves the message for the given message code from the message source.
    * If the message code is not null, the method resolves the corresponding message.
    *
    * @param messageCode the message code to retrieve the message for
@@ -155,7 +95,7 @@ public class LocalizerAdapter implements Localizer {
    */
   public String of(final String messageCode) {
     if (nonNull(messageCode)) {
-      return getMessageRes(messageCode);
+      return getMessage(messageCode);
     }
     return null;
   }
@@ -175,7 +115,7 @@ public class LocalizerAdapter implements Localizer {
         final T response = responseSupplier.get();
 
         if (nonNull(response) && nonNull(response.getMessageCode())) {
-          final String message = getMessageRes(response.getMessageCode());
+          final String message = getMessage(response.getMessageCode());
           response.setMessage(message);
         }
 
@@ -183,60 +123,6 @@ public class LocalizerAdapter implements Localizer {
       }
       return null;
     };
-  }
-
-  /**
-   * Sets the error message in the provided {@link ApiException} object based on its message code.
-   * If the exception and its message code are not null, the method retrieves the corresponding error message
-   * from the error message source and sets it in the exception.
-   *
-   * @param <T> the type of {@link ApiException}
-   * @param ex the {@link ApiException} object to set the error message for
-   * @return the updated {@link ApiException} with the resolved error message, or {@code null} if the exception or message code is {@code null}
-   */
-  public <T extends ApiException> T of(final T ex) {
-    if (nonNull(ex) && nonNull(ex.getMessageCode())) {
-      final String message = getMessageEx(ex.getMessageCode(), ex.getParams());
-      ex.setMessage(message);
-      return ex;
-    }
-    return null;
-  }
-
-  /**
-   * Retrieves the error message for the provided {@link ApiException} based on its message code,
-   * using the default locale.
-   * If the exception and its message code are not null, the method retrieves the corresponding error message
-   * from the error message source.
-   *
-   * @param <T> the type of {@link ApiException}
-   * @param ex the {@link ApiException} object to retrieve the error message for
-   * @return the resolved error message as a {@link String}, or {@code null} if the exception or message code is {@code null}
-   */
-  public <T extends ApiException> String getExMessage(final T ex) {
-    if (nonNull(ex) && nonNull(ex.getMessageCode())) {
-      return getMessageEx(ex.getMessageCode(), Locale.getDefault());
-    }
-    return null;
-  }
-
-  /**
-   * Creates an {@link ErrorResponse} based on the provided {@link ApiException} and HTTP status.
-   * If the exception and its message code are not null, the method retrieves the corresponding error message
-   * and creates an {@link ErrorResponse} with the message, status, and additional details from the exception.
-   *
-   * @param <T> the type of {@link ApiException}
-   * @param ex the {@link ApiException} object to create the error response for
-   * @param status the HTTP status to associate with the error response
-   * @return an {@link ErrorResponse} with the resolved error message and status, or a default {@link ErrorResponse} if the exception or message code is {@code null}
-   */
-  @Override
-  public <T extends ApiException> ErrorResponse withStatus(final T ex, final Response.Status status) {
-    if (nonNull(ex) && nonNull(ex.getMessageCode())) {
-      final String message = getMessageEx(ex.getMessageCode(), ex.getParams());
-      return ErrorResponse.of(message, status, ex.getDetails());
-    }
-    return ErrorResponse.of();
   }
 
 }
