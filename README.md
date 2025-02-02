@@ -13,7 +13,7 @@ It allows seamless resolution of localized messages usingLocalizer instances or 
 - Seamless integration with custom `ApiResponse` and `ApiException` classes for APIs.
 - Easily localize exceptions and API responses.
 
-You can also read []()
+You can also read [A Guide to Localizing and Internationalizing Your Java App with Localizer](https://medium.com/@aalamu/a-guide-to-localizing-and-internationalizing-your-java-app-with-localizer-58f6ac7af900)
 
 **Details:**
 
