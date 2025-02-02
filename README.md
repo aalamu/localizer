@@ -7,7 +7,7 @@ Localizer is a Java library that simplifies internationalization for your Java a
 It allows seamless resolution of localized messages usingLocalizer instances or beans, supporting multiple locales for general, response, and error messages. Localizer integrates with Spring and other frameworks, such as Vaadin, Quarkus, and Jakarta.
 
 **Features**
-- Retrieve localized messages from `Localized` beans.
+- Retrieve localized messages from `Localizer` beans.
 - Support multiple locales for general, response, and error messages.
 - Simplified error handling with localized messages.
 - Seamless integration with custom `ApiResponse` and `ApiException` classes for APIs.
