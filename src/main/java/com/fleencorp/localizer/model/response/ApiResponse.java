@@ -8,7 +8,7 @@ public abstract class ApiResponse {
   protected String message;
 
   @JsonIgnore
-  abstract public String getMessageCode();
+  public abstract String getMessageCode();
 
   @JsonIgnore
   public Object[] getParams() {
