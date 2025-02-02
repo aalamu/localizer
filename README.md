@@ -23,6 +23,7 @@ You can also read []()
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=aalamu_localizer&metric=alert_status)](https://sonarcloud.io/dashboard?id=aalamu_localizer)
 
+
 ## Installation
 
 Add the following Maven dependency to your project `pom.xml` file:
@@ -41,7 +42,7 @@ If you're using Gradle, include the following in your `build.gradle` file:
 implementation 'com.fleencorp.i18n:localizer:2.0.2'
 ```
 
-**Usage**
+## Usage
 
 Here’s how to use Localizer in a Spring Boot application. While this example uses Spring Boot, the same approach applies to frameworks like Vaadin, Quarkus, Jakarta, and even standalone Java applications.
 
