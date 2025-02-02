@@ -26,6 +26,7 @@ class LocalizerAdapterTest {
   @BeforeEach
   void setUp() {
     final StaticMessageSource messageSource = new StaticMessageSource();
+    LocaleContextHolder.setLocale(Locale.US);
 
     // Define messages in message sources
     messageSource.addMessage("test.key", Locale.US, "Test Message");
@@ -136,7 +137,7 @@ class LocalizerAdapterTest {
 
       @Override
       public Object[] getParams() {
-        return new Object[] {};  // No params in this case
+        return new Object[] {};
       }
     };
 
