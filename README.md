@@ -32,14 +32,14 @@ Add the following Maven dependency to your project `pom.xml` file:
 <dependency>
   <groupId>com.fleencorp.i18n</groupId>
   <artifactId>localizer</artifactId>
-  <version>2.0.2</version>
+  <version>2.0.6</version>
 </dependency>
 ```
 
 If you're using Gradle, include the following in your `build.gradle` file:
 
 ```groovy
-implementation 'com.fleencorp.i18n:localizer:2.0.2'
+implementation 'com.fleencorp.i18n:localizer:2.0.6'
 ```
 
 ## Usage
