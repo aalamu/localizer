@@ -1,16 +1,27 @@
 # Localizer
 
-_"A comprehensive Java library for internationalizing your APIs and applications with ease."_
+_"A Java library for internationalizing your APIs and applications with ease."_
 
-Localizer is a Java library that simplifies internationalization for your Java applications. It allows seamless resolution of localized messages from `MessageSource` instances or beans, supporting multiple locales for general, response, and error messages. With deep integration into Spring Boot and other frameworks (like Vaadin, Quarkus, Jakarta), Localizer enhances the user experience by offering an easy way to localize API responses and handle errors gracefully.
+Localizer is a Java library that simplifies internationalization for your Java applications, allowing them to support multiple languages with ease. 
+
+It allows seamless resolution of localized messages usingLocalizer instances or beans, supporting multiple locales for general, response, and error messages. Localizer integrates with Spring and other frameworks, such as Vaadin, Quarkus, and Jakarta.
 
 **Features**
-- Retrieve localized messages from `MessageSource` beans.
+- Retrieve localized messages from `Localized` beans.
 - Support multiple locales for general, response, and error messages.
 - Simplified error handling with localized messages.
 - Seamless integration with custom `ApiResponse` and `ApiException` classes for APIs.
 - Easily localize exceptions and API responses.
 
+You can also read []()
+
+**Details:**
+
+![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)
+
+![Build Status](https://github.com/aalamu/localizer/actions/workflows/start.yml/badge.svg)
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=aalamu_localizer&metric=alert_status)](https://sonarcloud.io/dashboard?id=aalamu_localizer)
 
 ## Installation
 
@@ -20,14 +31,14 @@ Add the following Maven dependency to your project `pom.xml` file:
 <dependency>
   <groupId>com.fleencorp.i18n</groupId>
   <artifactId>localizer</artifactId>
-  <version>2.0.0</version>
+  <version>2.0.2</version>
 </dependency>
 ```
 
 If you're using Gradle, include the following in your `build.gradle` file:
 
 ```groovy
-implementation 'com.fleencorp.i18n:localizer:2.0.0'
+implementation 'com.fleencorp.i18n:localizer:2.0.2'
 ```
 
 **Usage**
@@ -35,12 +46,13 @@ implementation 'com.fleencorp.i18n:localizer:2.0.0'
 Here’s how to use Localizer in a Spring Boot application. While this example uses Spring Boot, the same approach applies to frameworks like Vaadin, Quarkus, Jakarta, and even standalone Java applications.
 
 1. **Bean Configuration**  
-   First, configure the base name and encoding for your message resource files:
+   First, configure the encoding and base name for your message resource files:
 
 ```properties
 # application.properties
-spring.messages.message.base-name=classpath:i18n/messages
 spring.messages.encoding=UTF-8
+spring.messages.message.base-name=classpath:i18n/messages
+spring.messages.error.base-name=classpath:i18n/errors/messages
 ```
 
 Then, ensure `LocalizerAdapter` is configured as a bean in your application. Below is an example configuration class:
@@ -49,35 +61,45 @@ Then, ensure `LocalizerAdapter` is configured as a bean in your application. Bel
 @Configuration
 public class MessageSourceConfiguration {
 
-  // Customizable 
+   @Value("${spring.messages.encoding}")
+   private String messageSourceEncoding;
+
+   @Value("${spring.messages.message.base-name}")
+   private String messageBaseName;
+
+   @Value("${spring.messages.error.base-name}")
+   private String errorMessageBaseName;
+
   private ReloadableResourceBundleMessageSource baseMessageSource() {
     final ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
     messageSource.setDefaultLocale(Locale.US);
+    messageSource.setAlwaysUseMessageFormat(true);
     messageSource.setUseCodeAsDefaultMessage(false);
     messageSource.setFallbackToSystemLocale(false);
-    messageSource.setAlwaysUseMessageFormat(true);
+    messageSource.setDefaultEncoding(messageSourceEncoding);
     return messageSource;
   }
 
-  @Bean
-  @Primary
-  public MessageSource messageSource(
-      @Value("${spring.messages.message.base-name}") final String baseName,
-      @Value("${spring.messages.encoding}") final String encoding) {
+  private MessageSource messageSource() {
     final ReloadableResourceBundleMessageSource messageSource = baseMessageSource();
-    messageSource.setBasenames(baseName);
-    messageSource.setDefaultEncoding(encoding);
+    messageSource.setBasenames(messageBaseName);
     return messageSource;
   }
 
+   private MessageSource errorMessageSource() {
+      final ReloadableResourceBundleMessageSource messageSource = baseMessageSource();
+      messageSource.setBasenames(errorMessageBaseName);
+      return messageSource;
+   }
+
   @Bean
-  public Localizer localizer(final MesssageSource messsageSource) {
-    return new LocalizerAdapter(messsageSource);
+  public Localizer localizer() {
+    return new LocalizerAdapter(messsageSource());
   }
 
   @Bean
-  public ErrorLocalizer errorLocalizer(final MesssageSource messsageSource) {
-    return new ErrorLocalizerAdapter(messsageSource);
+  public ErrorLocalizer errorLocalizer() {
+    return new ErrorLocalizerAdapter(errorMessageSource());
   }
 }
 ```
@@ -102,7 +124,7 @@ Add additional locale-specific files such as `messages_fr.properties`, `messages
 
 3. **Localizing API Responses**
 
-    Localize your API responses by overriding the getMessageCode method in your ApiResponse class:
+    Localize your API responses by overriding the getMessageCode() method of ApiResponse in your extended classes. For example:
 
 ```java
 @Getter
@@ -126,21 +148,21 @@ Use `Localizer` with `AddCountryResponse` in `CountryServiceImpl`
 ```
   public class CountryServiceImpl implements CountryService {
 
-    private final Localizer localizer;
     private final CountryRepository countryRepository;
+    private final Localizer localizer;
 
     public CountryServiceImpl(
-      final Localizer localizer,
-      final CountryRepository countryRepository) {
-    this.localizer = localizer;
+      final CountryRepository countryRepository,
+      final Localizer localizer) {
     this.countryRepository = countryRepository;
+    this.localizer = localizer;
   }
 
   @Override
   public AddCountryResponse addCountry(final AddCountryDto countryDto) {
-    final Country country = countryDto.toCountry();
+    Country country = countryDto.toCountry();
 
-    countryRepository.save(country);
+    country = countryRepository.save(country);
     final CountryResponse countryResponse = CountryMapper.toCountryResponse(country);
 
     localizer.of(countryResponse);
@@ -152,9 +174,7 @@ Use `Localizer` with `AddCountryResponse` in `CountryServiceImpl`
 
 4. **Handling Exceptions**
     
-    Localize your exceptions by overriding the getMessageCode method in custom ApiException classes:
-
-How to use ApiException with `<T extends ApiException> ErrorResponse withStatus(T ex, Response.Status status)` and `<T extends ApiException> T of(T ex);`
+    Localize your exceptions by overriding the getMessageCode() method of ApiException in your extended classes. For example
 
 ```java
 public class DisabledAccountException extends ApiException {
@@ -166,7 +186,7 @@ public class DisabledAccountException extends ApiException {
 }
 ```
 
-5. **How to localize Exceptions with `<T extends ApiException> ErrorResponse withStatus(T ex, Response.Status status);`**
+   You will handle the exception like this in your exception handler
 
 ```java 
 @RestControllerAdvice
