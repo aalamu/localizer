@@ -6,7 +6,7 @@ import java.util.Map;
 public class ApiException extends RuntimeException {
 
   protected String message = "";
-  protected Object[] params = new Object[] {};
+  protected transient Object[] params = new Object[] {};
 
   public ApiException(final Object...params) {
     super();
