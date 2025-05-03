@@ -61,7 +61,7 @@ public class LocalizerAdapter implements Localizer {
    */
   public <T extends ApiResponse> T of(final T response) {
     if (nonNull(response) && nonNull(response.getMessageCode())) {
-      final String message = getMessage(response.getMessageCode());
+      final String message = getMessage(response.getMessageCode(), response.getParams());
       response.setMessage(message);
     }
     return response;
