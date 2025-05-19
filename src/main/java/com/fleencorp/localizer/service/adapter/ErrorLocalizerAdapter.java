@@ -1,6 +1,6 @@
 package com.fleencorp.localizer.service.adapter;
 
-import com.fleencorp.localizer.model.exception.ApiException;
+import com.fleencorp.localizer.model.exception.LocalizedException;
 import com.fleencorp.localizer.model.response.ErrorResponse;
 import com.fleencorp.localizer.service.ErrorLocalizer;
 import jakarta.ws.rs.core.Response;
@@ -23,15 +23,15 @@ public class ErrorLocalizerAdapter extends LocalizerAdapter implements ErrorLoca
   }
 
   /**
-   * Sets the error message in the provided {@link ApiException} object based on its message code.
+   * Sets the error message in the provided {@link LocalizedException} object based on its message code.
    * If the exception and its message code are not null, the method retrieves the corresponding error message
    * from the error message source and sets it in the exception.
    *
-   * @param <T> the type of {@link ApiException}
-   * @param ex the {@link ApiException} object to set the error message for
-   * @return the updated {@link ApiException} with the resolved error message, or {@code null} if the exception or message code is {@code null}
+   * @param <T> the type of {@link LocalizedException}
+   * @param ex the {@link LocalizedException} object to set the error message for
+   * @return the updated {@link LocalizedException} with the resolved error message, or {@code null} if the exception or message code is {@code null}
    */
-  public <T extends ApiException> T of(final T ex) {
+  public <T extends LocalizedException> T of(final T ex) {
     if (nonNull(ex) && nonNull(ex.getMessageCode())) {
       final String message = getMessage(ex.getMessageCode(), ex.getParams());
       ex.setMessage(message);
@@ -40,17 +40,17 @@ public class ErrorLocalizerAdapter extends LocalizerAdapter implements ErrorLoca
   }
 
   /**
-   * Creates an {@link ErrorResponse} based on the provided {@link ApiException} and HTTP status.
+   * Creates an {@link ErrorResponse} based on the provided {@link LocalizedException} and HTTP status.
    * If the exception and its message code are not null, the method retrieves the corresponding error message
    * and creates an {@link ErrorResponse} with the message, status, and additional details from the exception.
    *
-   * @param <T> the type of {@link ApiException}
-   * @param ex the {@link ApiException} object to create the error response for
+   * @param <T> the type of {@link LocalizedException}
+   * @param ex the {@link LocalizedException} object to create the error response for
    * @param status the HTTP status to associate with the error response
    * @return an {@link ErrorResponse} with the resolved error message and status, or a default {@link ErrorResponse} if the exception or message code is {@code null}
    */
   @Override
-  public <T extends ApiException> ErrorResponse withStatus(final T ex, final Response.Status status) {
+  public <T extends LocalizedException> ErrorResponse withStatus(final T ex, final Response.Status status) {
     if (nonNull(ex) && nonNull(ex.getMessageCode())) {
       final String message = getMessage(ex.getMessageCode(), ex.getParams());
       return ErrorResponse.of(message, status, ex.getDetails());

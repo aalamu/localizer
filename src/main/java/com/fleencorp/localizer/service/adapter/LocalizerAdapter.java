@@ -1,6 +1,6 @@
 package com.fleencorp.localizer.service.adapter;
 
-import com.fleencorp.localizer.model.response.ApiResponse;
+import com.fleencorp.localizer.model.response.LocalizedResponse;
 import com.fleencorp.localizer.service.Localizer;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -51,15 +51,15 @@ public class LocalizerAdapter implements Localizer {
   }
 
   /**
-   * Sets the message in the provided {@link ApiResponse} object based on its message code.
+   * Sets the message in the provided {@link LocalizedResponse} object based on its message code.
    * If the response and its message code are not null, the method retrieves the corresponding message
    * from the message source and sets it in the response.
    *
-   * @param <T> the type of {@link ApiResponse}
-   * @param response the {@link ApiResponse} object to set the message for
-   * @return the updated {@link ApiResponse} with the resolved message, or {@code null} if the response or message code is {@code null}
+   * @param <T> the type of {@link LocalizedResponse}
+   * @param response the {@link LocalizedResponse} object to set the message for
+   * @return the updated {@link LocalizedResponse} with the resolved message, or {@code null} if the response or message code is {@code null}
    */
-  public <T extends ApiResponse> T of(final T response) {
+  public <T extends LocalizedResponse> T of(final T response) {
     if (nonNull(response) && nonNull(response.getMessageCode())) {
       final String message = getMessage(response.getMessageCode(), response.getParams());
       response.setMessage(message);
@@ -68,17 +68,17 @@ public class LocalizerAdapter implements Localizer {
   }
 
   /**
-   * Sets the message in the provided {@link ApiResponse} object based on the provided message code.
+   * Sets the message in the provided {@link LocalizedResponse} object based on the provided message code.
    * If the response and message code are not null, the method retrieves the corresponding message
    * from the message source using the provided message code and the response's parameters,
    * then sets the message in the response.
    *
-   * @param <T> the type of {@link ApiResponse}
-   * @param response the {@link ApiResponse} object to set the message for
+   * @param <T> the type of {@link LocalizedResponse}
+   * @param response the {@link LocalizedResponse} object to set the message for
    * @param messageCode the message code to resolve the message
-   * @return the updated {@link ApiResponse} with the resolved message, or {@code null} if the response or message code is {@code null}
+   * @return the updated {@link LocalizedResponse} with the resolved message, or {@code null} if the response or message code is {@code null}
    */
-  public <T extends ApiResponse> T of(final T response, final String messageCode) {
+  public <T extends LocalizedResponse> T of(final T response, final String messageCode) {
     if (nonNull(response) && nonNull(messageCode)) {
       final String message = getMessage(messageCode, response.getParams());
       response.setMessage(message);
@@ -101,15 +101,15 @@ public class LocalizerAdapter implements Localizer {
   }
 
   /**
-   * Returns a {@link Supplier} that provides an {@link ApiResponse} with its message set, based on its message code.
-   * If the supplied {@link ApiResponse} is not null and has a valid message code, the method retrieves the corresponding
+   * Returns a {@link Supplier} that provides an {@link LocalizedResponse} with its message set, based on its message code.
+   * If the supplied {@link LocalizedResponse} is not null and has a valid message code, the method retrieves the corresponding
    * message and sets it in the response. If the response or message code is null, the method returns null.
    *
-   * @param <T> the type of {@link ApiResponse}
-   * @param responseSupplier the {@link Supplier} that provides the {@link ApiResponse}
-   * @return a {@link Supplier} that provides the {@link ApiResponse} with the resolved message, or {@code null} if the response or message code is {@code null}
+   * @param <T> the type of {@link LocalizedResponse}
+   * @param responseSupplier the {@link Supplier} that provides the {@link LocalizedResponse}
+   * @return a {@link Supplier} that provides the {@link LocalizedResponse} with the resolved message, or {@code null} if the response or message code is {@code null}
    */
-  public <T extends ApiResponse> Supplier<T> of(final Supplier<T> responseSupplier) {
+  public <T extends LocalizedResponse> Supplier<T> of(final Supplier<T> responseSupplier) {
     return () -> {
       if (nonNull(responseSupplier) && nonNull(responseSupplier.get())) {
         final T response = responseSupplier.get();
