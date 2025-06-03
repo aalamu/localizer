@@ -32,7 +32,7 @@ Add the following Maven dependency to your project `pom.xml` file:
 <dependency>
   <groupId>com.fleencorp.i18n</groupId>
   <artifactId>localizer</artifactId>
-  <version>2.0.6</version>
+  <version>2.2.2</version>
 </dependency>
 ```
 
