@@ -10,7 +10,7 @@ It allows seamless resolution of localized messages usingLocalizer instances or 
 - Retrieve localized messages from `Localizer` beans.
 - Support multiple locales for general, response, and error messages.
 - Simplified error handling with localized messages.
-- Seamless integration with custom `ApiResponse` and `ApiException` classes for APIs.
+- Seamless integration with custom `LocalizedResponse` and `LocalizedException` classes for APIs.
 - Easily localize exceptions and API responses.
 
 You can also read [A Guide to Localizing and Internationalizing Your Java App with Localizer](https://medium.com/@aalamu/a-guide-to-localizing-and-internationalizing-your-java-app-with-localizer-58f6ac7af900)
@@ -125,14 +125,14 @@ Add additional locale-specific files such as `messages_fr.properties`, `messages
 
 3. **Localizing API Responses**
 
-    Localize your API responses by overriding the getMessageCode() method of ApiResponse in your extended classes. For example:
+    Localize your API responses by overriding the getMessageCode() method of LocalizedResponse in your extended classes. For example:
 
 ```java
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddCountryResponse extends ApiResponse {
+public class AddCountryResponse extends LocalizedResponse {
 
   @Override
   public String getMessageCode() {
@@ -175,10 +175,10 @@ Use `Localizer` with `AddCountryResponse` in `CountryServiceImpl`
 
 4. **Handling Exceptions**
     
-    Localize your exceptions by overriding the getMessageCode() method of ApiException in your extended classes. For example
+    Localize your exceptions by overriding the getMessageCode() method of LocalizedException in your extended classes. For example
 
 ```java
-public class DisabledAccountException extends ApiException {
+public class DisabledAccountException extends LocalizedException {
 
   @Override
   public String getMessageCode() {
@@ -214,7 +214,7 @@ public class RestExceptionHandler {
 
 
 ```java
-public class SignInResponse extends ApiResponse {
+public class SignInResponse extends LocalizedResponse {
   
    @Override
    public String getMessageCode() {
