@@ -34,6 +34,7 @@ public class LocalizerAdapter implements Localizer {
    * @param params optional parameters to be used within the message if applicable
    * @return the resolved message as a {@link String}
    */
+  @Override
   public String getMessage(final String key, final Locale locale, final Object...params) {
     return messageSource.getMessage(key, params, locale);
   }
@@ -46,9 +47,11 @@ public class LocalizerAdapter implements Localizer {
    * @param params optional parameters to be used within the message if applicable
    * @return the resolved message as a {@link String}
    */
+  @Override
   public String getMessage(final String key, final Object...params) {
     return getMessage(key, LocaleContextHolder.getLocale(), params);
   }
+
 
   /**
    * Sets the message in the provided {@link LocalizedResponse} object based on its message code.
@@ -78,6 +81,7 @@ public class LocalizerAdapter implements Localizer {
    * @param messageCode the message code to resolve the message
    * @return the updated {@link LocalizedResponse} with the resolved message, or {@code null} if the response or message code is {@code null}
    */
+  @Override
   public <T extends LocalizedResponse> T of(final T response, final String messageCode) {
     if (nonNull(response) && nonNull(messageCode)) {
       final String message = getMessage(messageCode, response.getParams());
@@ -93,6 +97,7 @@ public class LocalizerAdapter implements Localizer {
    * @param messageCode the message code to retrieve the message for
    * @return the resolved message as a {@link String}, or {@code null} if the message code is {@code null}
    */
+  @Override
   public String of(final String messageCode) {
     if (nonNull(messageCode)) {
       return getMessage(messageCode);
@@ -109,6 +114,7 @@ public class LocalizerAdapter implements Localizer {
    * @param responseSupplier the {@link Supplier} that provides the {@link LocalizedResponse}
    * @return a {@link Supplier} that provides the {@link LocalizedResponse} with the resolved message, or {@code null} if the response or message code is {@code null}
    */
+  @Override
   public <T extends LocalizedResponse> Supplier<T> of(final Supplier<T> responseSupplier) {
     return () -> {
       if (nonNull(responseSupplier) && nonNull(responseSupplier.get())) {

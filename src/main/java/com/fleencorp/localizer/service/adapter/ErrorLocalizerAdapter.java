@@ -57,4 +57,24 @@ public class ErrorLocalizerAdapter extends LocalizerAdapter implements ErrorLoca
     }
     return ErrorResponse.of();
   }
+
+  /**
+   * Builds an {@link ErrorResponse} using the given message code and status.
+   * If the provided message code is not null and resolvable, a localized message is
+   * retrieved and included in the response along with any available exception details.
+   * If no valid message code is provided, a default empty {@code ErrorResponse} is returned.
+   *
+   * @param messageCode the message key used to resolve a localized error message
+   * @param status the response status to associate with the error
+   * @param <T> the type of {@link LocalizedException} associated with the error
+   * @return an {@code ErrorResponse} containing the resolved message and details if available,
+   *         or a default empty error response if not
+   */
+  public <T extends LocalizedException> ErrorResponse withStatus(final String messageCode, final Response.Status status) {
+    if (nonNull(ex) && nonNull(ex.getMessageCode())) {
+      final String message = getMessage(messageCode);
+      return ErrorResponse.of(message, status, ex.getDetails());
+    }
+    return ErrorResponse.of();
+  }
 }

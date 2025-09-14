@@ -12,6 +12,7 @@ import java.util.Map;
 public class ErrorResponse {
 
   private static final String DEFAULT_MESSAGE = "An error has occurred";
+  private static final String DEFAULT_MESSAGE_CODE = "default.error";
 
   private String message;
   private String reason;
