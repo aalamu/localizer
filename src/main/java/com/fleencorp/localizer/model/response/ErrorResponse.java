@@ -135,4 +135,8 @@ public class ErrorResponse {
 
     return errorResponse;
   }
+
+  public static String defaultMessageCode() {
+    return DEFAULT_MESSAGE_CODE;
+  }
 }
