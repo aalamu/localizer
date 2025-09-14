@@ -6,6 +6,8 @@ import com.fleencorp.localizer.service.ErrorLocalizer;
 import jakarta.ws.rs.core.Response;
 import org.springframework.context.MessageSource;
 
+import java.util.Map;
+
 import static java.util.Objects.nonNull;
 
 /**
@@ -71,9 +73,9 @@ public class ErrorLocalizerAdapter extends LocalizerAdapter implements ErrorLoca
    *         or a default empty error response if not
    */
   public <T extends LocalizedException> ErrorResponse withStatus(final String messageCode, final Response.Status status) {
-    if (nonNull(ex) && nonNull(ex.getMessageCode())) {
+    if (nonNull(messageCode)) {
       final String message = getMessage(messageCode);
-      return ErrorResponse.of(message, status, ex.getDetails());
+      return ErrorResponse.of(message, status, Map.of());
     }
     return ErrorResponse.of();
   }
