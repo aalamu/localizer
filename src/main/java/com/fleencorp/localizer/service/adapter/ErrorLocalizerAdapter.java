@@ -72,6 +72,7 @@ public class ErrorLocalizerAdapter extends LocalizerAdapter implements ErrorLoca
    * @return an {@code ErrorResponse} containing the resolved message and details if available,
    *         or a default empty error response if not
    */
+  @Override
   public <T extends LocalizedException> ErrorResponse withStatus(final String messageCode, final Response.Status status) {
     if (nonNull(messageCode)) {
       final String message = getMessage(messageCode);

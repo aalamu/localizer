@@ -9,4 +9,6 @@ public interface ErrorLocalizer extends Localizer {
   <T extends LocalizedException> T of(T ex);
 
   <T extends LocalizedException> ErrorResponse withStatus(T ex, Response.Status status);
+
+  <T extends LocalizedException> ErrorResponse withStatus(String messageCode, Response.Status status);
 }
