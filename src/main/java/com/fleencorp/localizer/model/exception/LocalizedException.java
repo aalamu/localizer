@@ -21,6 +21,10 @@ public class LocalizedException extends RuntimeException {
     return "";
   }
 
+  public String getExeptionTypeCode() {
+    return "";
+  }
+
   public Object[] getParams() {
     return params;
   }
