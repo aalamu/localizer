@@ -55,7 +55,7 @@ public class ErrorLocalizerAdapter extends LocalizerAdapter implements ErrorLoca
   public <T extends LocalizedException> ErrorResponse withStatus(final T ex, final Response.Status status) {
     if (nonNull(ex) && nonNull(ex.getMessageCode())) {
       final String message = getMessage(ex.getMessageCode(), ex.getParams());
-      return ErrorResponse.of(message, status, ex.getDetails());
+      return ErrorResponse.of(message, status, ex.getExeptionTypeCode(), ex.getDetails());
     }
     return ErrorResponse.of();
   }
@@ -76,7 +76,7 @@ public class ErrorLocalizerAdapter extends LocalizerAdapter implements ErrorLoca
   public <T extends LocalizedException> ErrorResponse withStatus(final String messageCode, final Response.Status status) {
     if (nonNull(messageCode)) {
       final String message = getMessage(messageCode);
-      return ErrorResponse.of(message, status, Map.of());
+      return ErrorResponse.of(message, status, null, Map.of());
     }
     return ErrorResponse.of();
   }

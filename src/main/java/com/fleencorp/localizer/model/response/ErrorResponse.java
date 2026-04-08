@@ -17,6 +17,7 @@ public class ErrorResponse {
   private String message;
   private String reason;
   private Object status;
+  private String errorTypeCode;
   private LocalDateTime timestamp;
   private List<Map<String, Object>> fieldErrors = new ArrayList<>();
   private Map<String, Object> details = new HashMap<>();
@@ -57,6 +58,15 @@ public class ErrorResponse {
     this.timestamp = timestamp;
   }
 
+  @JsonProperty("error_type_code")
+  public String getErrorTypeCode() {
+    return errorTypeCode;
+  }
+
+  public void setErrorTypeCode(final String errorTypeCode) {
+    this.errorTypeCode = errorTypeCode;
+  }
+
   public List<Map<String, Object>> getFieldErrors() {
     return fieldErrors;
   }
@@ -85,12 +95,18 @@ public class ErrorResponse {
    * @param details other details that might explain the error and an action to do
    * @return a new {@link ErrorResponse} instance with the specified message, status, reason, and timestamp.
    */
-  public static ErrorResponse of(final String message, final Response.Status status, final Map<String, Object> details) {
+  public static ErrorResponse of(
+      final String message,
+      final Response.Status status,
+      final String errorTypeCode,
+      final Map<String, Object> details
+  ) {
     final ErrorResponse errorResponse = new ErrorResponse();
     errorResponse.setMessage(message);
     errorResponse.setReason(status.getReasonPhrase());
     errorResponse.setStatus(status.getStatusCode());
     errorResponse.setTimestamp(LocalDateTime.now());
+    errorResponse.setErrorTypeCode(errorTypeCode);
     errorResponse.setDetails(details);
 
     return errorResponse;
@@ -109,13 +125,18 @@ public class ErrorResponse {
    * @return a new {@link ErrorResponse} instance with the specified message, status, reason, timestamp, field errors,
    *         and default error type.
    */
-  public static ErrorResponse of(final String message, final Response.Status status, final List<Map<String, Object>> fieldErrors) {
+  public static ErrorResponse of(
+      final String message,
+      final Response.Status status,
+      final String errorTypeCode,
+      final List<Map<String, Object>> fieldErrors) {
     final ErrorResponse errorResponse = new ErrorResponse();
     errorResponse.setMessage(message);
     errorResponse.setReason(status.getReasonPhrase());
     errorResponse.setStatus(status.getStatusCode());
     errorResponse.setTimestamp(LocalDateTime.now());
     errorResponse.setFieldErrors(fieldErrors);
+    errorResponse.setErrorTypeCode(errorTypeCode);
     errorResponse.setDetails(null);
 
     return errorResponse;
