@@ -68,6 +68,7 @@ public class ErrorResponse {
     this.errorTypeCode = errorTypeCode;
   }
 
+  @JsonProperty("field_errors")
   public List<Map<String, Object>> getFieldErrors() {
     return fieldErrors;
   }
