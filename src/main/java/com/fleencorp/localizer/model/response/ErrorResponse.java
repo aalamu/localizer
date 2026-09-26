@@ -21,6 +21,7 @@ public class ErrorResponse {
   private LocalDateTime timestamp;
   private List<Map<String, Object>> fieldErrors = new ArrayList<>();
   private Map<String, Object> details = new HashMap<>();
+  private Object otherDetails = null;
 
   @JsonProperty("message")
   public String getMessage() {
@@ -80,8 +81,17 @@ public class ErrorResponse {
     return details;
   }
 
+  @JsonProperty("other_details")
+  public Object getOtherDetails() {
+    return otherDetails;
+  }
+
   public void setDetails(final Map<String, Object> details) {
     this.details = details;
+  }
+
+  public void setOtherDetails(final Object otherDetails) {
+    this.otherDetails = otherDetails;
   }
 
   /**
@@ -112,6 +122,25 @@ public class ErrorResponse {
     return errorResponse;
   }
 
+  public static ErrorResponse of(
+    final String message,
+    final Response.Status status,
+    final String errorTypeCode,
+    final Map<String, Object> details,
+    final Object otherDetails
+  ) {
+    final ErrorResponse errorResponse = new ErrorResponse();
+    errorResponse.setMessage(message);
+    errorResponse.setReason(status.getReasonPhrase());
+    errorResponse.setStatus(status.getStatusCode());
+    errorResponse.setTimestamp(LocalDateTime.now());
+    errorResponse.setErrorTypeCode(errorTypeCode);
+    errorResponse.setDetails(details);
+    errorResponse.setOtherDetails(otherDetails);
+
+    return errorResponse;
+  }
+
   /**
    * Creates an {@link ErrorResponse} with the specified message, HTTP status, and field-specific error details.
    *
@@ -138,6 +167,25 @@ public class ErrorResponse {
     errorResponse.setFieldErrors(fieldErrors);
     errorResponse.setErrorTypeCode(errorTypeCode);
     errorResponse.setDetails(null);
+
+    return errorResponse;
+  }
+
+  public static ErrorResponse of(
+    final String message,
+    final Response.Status status,
+    final String errorTypeCode,
+    final List<Map<String, Object>> fieldErrors,
+    final Object otherDetails) {
+    final ErrorResponse errorResponse = new ErrorResponse();
+    errorResponse.setMessage(message);
+    errorResponse.setReason(status.getReasonPhrase());
+    errorResponse.setStatus(status.getStatusCode());
+    errorResponse.setTimestamp(LocalDateTime.now());
+    errorResponse.setFieldErrors(fieldErrors);
+    errorResponse.setErrorTypeCode(errorTypeCode);
+    errorResponse.setDetails(null);
+    errorResponse.setOtherDetails(otherDetails);
 
     return errorResponse;
   }
