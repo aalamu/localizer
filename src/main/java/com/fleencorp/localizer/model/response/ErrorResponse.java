@@ -3,7 +3,8 @@ package com.fleencorp.localizer.model.response;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.ws.rs.core.Response;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +19,7 @@ public class ErrorResponse {
   private String reason;
   private Object status;
   private String errorTypeCode;
-  private LocalDateTime timestamp;
+  private Instant timestamp;
   private List<Map<String, Object>> fieldErrors = new ArrayList<>();
   private Map<String, Object> details = new HashMap<>();
   private Object otherDetails = null;
@@ -51,11 +52,11 @@ public class ErrorResponse {
   }
 
   @JsonProperty("timestamp")
-  public LocalDateTime getTimestamp() {
+  public Instant getTimestamp() {
     return timestamp;
   }
 
-  public void setTimestamp(final LocalDateTime timestamp) {
+  public void setTimestamp(final Instant timestamp) {
     this.timestamp = timestamp;
   }
 
@@ -116,7 +117,7 @@ public class ErrorResponse {
     errorResponse.setMessage(message);
     errorResponse.setReason(status.getReasonPhrase());
     errorResponse.setStatus(status.getStatusCode());
-    errorResponse.setTimestamp(LocalDateTime.now());
+    errorResponse.setTimestamp(now());
     errorResponse.setErrorTypeCode(errorTypeCode);
     errorResponse.setDetails(details);
 
@@ -134,7 +135,7 @@ public class ErrorResponse {
     errorResponse.setMessage(message);
     errorResponse.setReason(status.getReasonPhrase());
     errorResponse.setStatus(status.getStatusCode());
-    errorResponse.setTimestamp(LocalDateTime.now());
+    errorResponse.setTimestamp(now());
     errorResponse.setErrorTypeCode(errorTypeCode);
     errorResponse.setDetails(details);
     errorResponse.setOtherDetails(otherDetails);
@@ -164,7 +165,7 @@ public class ErrorResponse {
     errorResponse.setMessage(message);
     errorResponse.setReason(status.getReasonPhrase());
     errorResponse.setStatus(status.getStatusCode());
-    errorResponse.setTimestamp(LocalDateTime.now());
+    errorResponse.setTimestamp(now());
     errorResponse.setFieldErrors(fieldErrors);
     errorResponse.setErrorTypeCode(errorTypeCode);
     errorResponse.setDetails(null);
@@ -182,7 +183,7 @@ public class ErrorResponse {
     errorResponse.setMessage(message);
     errorResponse.setReason(status.getReasonPhrase());
     errorResponse.setStatus(status.getStatusCode());
-    errorResponse.setTimestamp(LocalDateTime.now());
+    errorResponse.setTimestamp(now());
     errorResponse.setFieldErrors(fieldErrors);
     errorResponse.setErrorTypeCode(errorTypeCode);
     errorResponse.setDetails(null);
@@ -201,7 +202,7 @@ public class ErrorResponse {
   public static ErrorResponse of() {
     final ErrorResponse errorResponse = new ErrorResponse();
     errorResponse.setMessage(DEFAULT_MESSAGE);
-    errorResponse.setTimestamp(LocalDateTime.now());
+    errorResponse.setTimestamp(now());
 
     return errorResponse;
   }
@@ -209,4 +210,13 @@ public class ErrorResponse {
   public static String defaultMessageCode() {
     return DEFAULT_MESSAGE_CODE;
   }
+
+  /**
+   * The moment the error is built, as an instant (serialised as UTC ending in {@code Z}), to the
+   * microsecond so it reads the same on every platform's clock.
+   */
+  private static Instant now() {
+    return Instant.now().truncatedTo(ChronoUnit.MICROS);
+  }
+
 }
